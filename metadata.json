@@ -1,6 +1,6 @@
 {
   "name": "Gulzoda — Estetik Sahifa",
-  "description": "Gulzoda uchun maxsus yaratilgan, nozik va estetik mobil (smartphone) vertikal veb-sayti",
+  "description": "Gulzoda uchun yaratilgan, rus va o'zbek tillarini qo'llab-quvvatlovchi nozik va estetik mobil veb-sayt",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
