@@ -1,0 +1,6 @@
+{
+  "name": "Gulzoda — Estetik Sahifa",
+  "description": "Gulzoda uchun maxsus yaratilgan, nozik va estetik mobil (smartphone) vertikal veb-sayti",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

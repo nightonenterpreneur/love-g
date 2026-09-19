@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="uz" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Gulzoda — Maxsus va Estetik Sahifa</title>
+  <meta name="description" content="Gulzoda uchun maxsus yaratilgan, nozik va estetik vertikal scroll veb-sayti." />
+  <meta property="og:title" content="Gulzoda — Maxsus va Estetik Sahifa" />
+  <meta property="og:description" content="Gulzoda uchun maxsus yaratilgan, nozik va estetik mobil veb-sayti." />
+  <meta property="og:type" content="website" />
+
+  <!-- Google Fonts: Playfair Display, Plus Jakarta Sans, Caveat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            hand: ['"Caveat"', 'cursive']
+          },
+          colors: {
+            ivory: {
+              DEFAULT: '#FDFBF7',
+              50: '#FFFFFF',
+              100: '#FDFBF7',
+              200: '#F9F5EC',
+              300: '#F3ECDE',
+              400: '#E8DEC9'
+            },
+            rose: {
+              50: '#fff1f2',
+              100: '#ffe4e6',
+              200: '#fecdd3',
+              300: '#fda4af',
+              400: '#fb7185',
+              500: '#f43f5e'
+            },
+            lavender: {
+              50: '#FAF7FD',
+              100: '#F3E8FF',
+              200: '#E9D5FF',
+              300: '#D8B4FE',
+              400: '#C084FC',
+              500: '#A855F7'
+            },
+            gold: {
+              300: '#FDE68A',
+              400: '#FBBF24',
+              500: '#F59E0B',
+              600: '#D97706'
+            }
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'pulse-soft': 'pulseSoft 4s ease-in-out infinite',
+            'spin-slow': 'spin 24s linear infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' }
+            },
+            pulseSoft: {
+              '0%, 100%': { opacity: 0.5, transform: 'scale(1)' },
+              '50%': { opacity: 0.8, transform: 'scale(1.06)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* Mobile-first base styling */
+    html {
+      background-color: #FDFBF7;
+      scroll-behavior: smooth;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #FDFBF7;
+      color: #1e293b;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Watercolor atmospheric background accents */
+    .bg-spot {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.45;
+    }
+
+    /* Modern Art Gallery & Editorial Minimal Card styling */
+    .editorial-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(244, 230, 215, 0.85);
+      box-shadow: 0 10px 30px -10px rgba(225, 185, 160, 0.12);
+    }
+
+    /* Golden Halo Animation for Avatar */
+    @keyframes goldenGlow {
+      0% {
+        box-shadow: 0 0 20px rgba(245, 158, 11, 0.35), 0 0 40px rgba(251, 113, 133, 0.25);
+      }
+      50% {
+        box-shadow: 0 0 35px rgba(245, 158, 11, 0.65), 0 0 70px rgba(244, 63, 94, 0.45);
+      }
+      100% {
+        box-shadow: 0 0 20px rgba(245, 158, 11, 0.35), 0 0 40px rgba(251, 113, 133, 0.25);
+      }
+    }
+    .avatar-halo {
+      animation: goldenGlow 3s infinite ease-in-out;
+    }
+
+    /* Telegram Chat bubbles */
+    .tg-bubble-in {
+      background: #FFFFFF;
+      border: 1px solid #F3E8FF;
+      border-radius: 18px 18px 18px 4px;
+    }
+    .tg-bubble-out {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FCE7F3 100%);
+      border: 1px solid #FDE68A;
+      border-radius: 18px 18px 4px 18px;
+    }
+
+    /* Touch targets */
+    .touch-target {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-slate-800 selection:bg-rose-200 selection:text-rose-900">
+
+  <!-- Background Floating Petals Canvas -->
+  <canvas id="petals-canvas" class="fixed inset-0 pointer-events-none z-10 w-full h-full"></canvas>
+
+  <!-- Watercolor Background Spots -->
+  <div class="bg-spot w-72 h-72 md:w-96 md:h-96 bg-rose-200 top-[-5%] left-[-10%] animate-pulse-soft"></div>
+  <div class="bg-spot w-80 h-80 md:w-[32rem] md:h-[32rem] bg-lavender-200 top-[35%] right-[-15%]"></div>
+  <div class="bg-spot w-72 h-72 md:w-96 md:h-96 bg-amber-100 bottom-[20%] left-[-10%] animate-pulse-soft"></div>
+  <div class="bg-spot w-80 h-80 md:w-[28rem] md:h-[28rem] bg-rose-100 bottom-[-5%] right-[-5%]"></div>
+
+  <!-- STICKY TOP BAR: Mobile-First Header with Reading Progress Bar -->
+  <header id="top-navbar" class="sticky top-0 left-0 right-0 z-40 bg-ivory-100/90 backdrop-blur-md border-b border-amber-100/80 px-4 py-3 sm:px-6">
+    <div class="max-w-xl mx-auto flex items-center justify-between">
+      
+      <!-- Brand & Name -->
+      <a href="#hero" class="flex items-center gap-2.5 group">
+        <span class="w-8 h-8 rounded-full bg-gradient-to-tr from-rose-200 via-pink-100 to-amber-200 flex items-center justify-center text-sm shadow-xs border border-white group-hover:scale-105 transition-transform">
+          🌸
+        </span>
+        <div>
+          <h1 class="font-serif font-bold text-base sm:text-lg text-slate-900 tracking-tight leading-none">Gulzoda</h1>
+          <p class="text-[10px] text-rose-500 font-medium tracking-wider uppercase mt-0.5">Nafosat & Qalb Go'zalligi</p>
+        </div>
+      </a>
+
+      <!-- Quick Section Jump & Config -->
+      <div class="flex items-center gap-2">
+        <a href="#taklif" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-rose-500 text-white shadow-xs hover:bg-rose-600 transition-colors flex items-center gap-1">
+          <span>Taklif</span>
+          <span class="text-[10px]">💌</span>
+        </a>
+
+        <a href="#chat" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-white text-slate-700 border border-rose-100 hover:bg-rose-50 transition-colors flex items-center gap-1">
+          <span>Chat</span>
+          <span class="text-[10px]">💬</span>
+        </a>
+
+        <!-- Telegram Config Modal Button -->
+        <button onclick="toggleConfigModal()" title="Telegram Bot Sozlamalari" class="p-2 rounded-full text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition-colors touch-target flex items-center justify-center">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Thin Aesthetic Reading Progress Bar -->
+    <div class="absolute bottom-0 left-0 w-full h-[2px] bg-rose-100/60">
+      <div id="scroll-progress-bar" class="h-full bg-gradient-to-r from-rose-400 via-pink-500 to-amber-400 w-0 transition-all duration-75"></div>
+    </div>
+  </header>
+
+  <!-- MAIN VERTICAL CONTENT WRAPPER -->
+  <main class="relative z-20 max-w-xl mx-auto px-4 py-8 sm:py-12 space-y-16">
+
+    <!-- ==========================================
+         SEKSIYA 1: HERO & PROFIL (Mobile First)
+         ========================================== -->
+    <section id="hero" class="flex flex-col items-center text-center space-y-6 pt-2">
+      
+      <!-- Avatar with Golden Ring & Animated Petals -->
+      <div class="relative group cursor-pointer">
+        <!-- Golden Halo Aura -->
+        <div class="avatar-halo absolute inset-0 rounded-full bg-gradient-to-tr from-amber-300 via-rose-300 to-yellow-200 opacity-60 filter blur-md pointer-events-none scale-105"></div>
+
+        <!-- Rotating dashed floral accent ring -->
+        <div class="absolute -inset-3 rounded-full border border-dashed border-amber-300/70 animate-spin-slow pointer-events-none"></div>
+
+        <!-- Floating decorative badge -->
+        <div class="absolute -top-1 -right-1 z-20 bg-white/95 backdrop-blur-md px-2.5 py-0.5 rounded-full shadow-md border border-rose-100 text-[11px] font-semibold text-rose-600 flex items-center gap-1">
+          <span>✨</span>
+          <span>Gulzoda</span>
+        </div>
+
+        <!-- Central Circular Photo -->
+        <div class="relative z-10 w-48 h-48 sm:w-56 sm:h-56 rounded-full p-1.5 bg-gradient-to-tr from-amber-200 via-rose-200 to-amber-100 shadow-xl overflow-hidden">
+          <img 
+            src="photo.PNG" 
+            alt="Gulzoda" 
+            id="profile-photo"
+            onerror="if (this.src.indexOf('photo.jpg') === -1) { this.src='photo.jpg'; }"
+            class="rounded-full shadow-xl border-4 border-amber-200 w-full h-full object-cover object-center transition-transform duration-700 active:scale-95" 
+          />
+        </div>
+
+        <!-- Petals Burst Touch Button -->
+        <button 
+          onclick="burstPetalsAtAvatar(event)" 
+          class="mt-3.5 mx-auto flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-white/90 text-rose-600 border border-rose-200 shadow-xs active:bg-rose-50 hover:bg-rose-50 transition-all touch-target"
+        >
+          <span>🌸 Gul barglari sochish</span>
+        </button>
+      </div>
+
+      <!-- Intro Poetry & Description -->
+      <div class="space-y-3.5 px-2">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100/70 border border-rose-200 text-rose-700 text-[11px] font-medium">
+          <span>✨</span>
+          <span>O'z qadrini biladigan, samimiy va mas'uliyatli qalb</span>
+        </div>
+
+        <h2 class="text-3xl sm:text-4xl font-serif font-bold text-slate-900 tracking-tight leading-tight">
+          Gulzoda — <br/>
+          <span class="bg-gradient-to-r from-rose-500 via-pink-600 to-amber-500 bg-clip-text text-transparent italic">
+            Ko'ngillarga iliqlik ulashuvchi inson
+          </span>
+        </h2>
+
+        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-light">
+          O'zini va o'z qadrini chuqur hurmat qiladigan, har bir ishga yuksak mas'uliyat bilan yondashadigan teran qalb. Uning samimiy tabassumi atrofga mehrli iliqlik taratadi, nozik estetik qarashlari esa hayotdagi har bir rangni san'atdek his ettiradi.
+        </p>
+
+        <!-- Quote -->
+        <p class="font-hand text-xl sm:text-2xl text-rose-500 pt-1">
+          "Go'zallik qalbning nafosatida..."
+        </p>
+      </div>
+
+      <!-- 4 Trait Mini Badges (Grid 2x2 on Mobile) -->
+      <div class="grid grid-cols-2 gap-2.5 w-full text-left pt-2">
+        
+        <div class="editorial-card rounded-2xl p-3 sm:p-3.5 flex items-start gap-2.5">
+          <span class="w-8 h-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-sm flex-shrink-0">🌺</span>
+          <div>
+            <p class="text-xs font-bold text-slate-800 leading-tight">Gullar Oshuftasi</p>
+            <p class="text-[10px] text-slate-500 mt-0.5 leading-snug">Tabiat ifori va nafislikka mehr</p>
+          </div>
+        </div>
+
+        <div class="editorial-card rounded-2xl p-3 sm:p-3.5 flex items-start gap-2.5">
+          <span class="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-sm flex-shrink-0">🎨</span>
+          <div>
+            <p class="text-xs font-bold text-slate-800 leading-tight">San'at & Mo'yqalam</p>
+            <p class="text-[10px] text-slate-500 mt-0.5 leading-snug">Rassomlikka qiziqqan nozik did</p>
+          </div>
+        </div>
+
+        <div class="editorial-card rounded-2xl p-3 sm:p-3.5 flex items-start gap-2.5">
+          <span class="w-8 h-8 rounded-xl bg-lavender-100 text-lavender-600 flex items-center justify-center text-sm flex-shrink-0">🙏</span>
+          <div>
+            <p class="text-xs font-bold text-slate-800 leading-tight">Shukronalik</p>
+            <p class="text-[10px] text-slate-500 mt-0.5 leading-snug">Hech qachon nolimaydigan sabr</p>
+          </div>
+        </div>
+
+        <div class="editorial-card rounded-2xl p-3 sm:p-3.5 flex items-start gap-2.5">
+          <span class="w-8 h-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-sm flex-shrink-0">🎯</span>
+          <div>
+            <p class="text-xs font-bold text-slate-800 leading-tight">Ulkan Maqsadlar</p>
+            <p class="text-[10px] text-slate-500 mt-0.5 leading-snug">Irodali va sabotli orzular sari</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Jump Button -->
+      <a href="#fazilatlar" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 text-white text-xs font-semibold shadow-md active:scale-95 transition-all">
+        <span>Qalb qirralari bilan tanishish</span>
+        <span>↓</span>
+      </a>
+    </section>
+
+    <!-- ==========================================
+         SEKSIYA 2: SAN'AT, TABASSUM VA MAQSADLAR (Card Gallery)
+         ========================================== -->
+    <section id="fazilatlar" class="space-y-6 pt-6">
+      
+      <!-- Section Header -->
+      <div class="text-center space-y-1">
+        <span class="text-[10px] font-bold tracking-widest text-amber-600 uppercase">02 • Qalb Qirralari</span>
+        <h3 class="text-2xl sm:text-3xl font-serif font-bold text-slate-900">
+          San'at, Tabassum va Maqsadlar
+        </h3>
+        <p class="text-xs text-slate-500 max-w-sm mx-auto font-light">
+          Gulzodaning har bir fazilati va uning dunyoqarashidagi beg'ubor uyg'unlik
+        </p>
+      </div>
+
+      <!-- Stacked Mobile Editorial Cards -->
+      <div class="space-y-4">
+        
+        <!-- CARD 1: Gullar va Tabassum -->
+        <div class="editorial-card rounded-3xl p-5 sm:p-6 relative overflow-hidden border border-rose-200/80 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-11 h-11 rounded-2xl bg-gradient-to-br from-rose-200 to-pink-100 flex items-center justify-center text-xl shadow-xs">
+                🌷
+              </span>
+              <div>
+                <h4 class="font-serif font-bold text-lg text-slate-900">Gullar va Tabassum</h4>
+                <p class="text-[11px] text-rose-600 font-medium">Uning samimiyati va gullarga sevgisi</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold text-rose-500 uppercase tracking-wider bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100">
+              Mehr
+            </span>
+          </div>
+
+          <p class="text-xs text-slate-600 leading-relaxed font-light">
+            Uning samimiy tabassumi xuddi bahorning ilk tongi kabi qalbga iliqlik va yorug'lik olib kiradi. Gullarning nafisligi va tabiatning sofligini jonidan ortiq sevishi — uning ko'ngli naqadar pok va mehribon ekanidan dalolatdir.
+          </p>
+
+          <div class="p-3 rounded-2xl bg-rose-50/50 border border-rose-100">
+            <p class="font-hand text-base sm:text-lg text-rose-700 leading-snug text-center">
+              "Tabassum — har qanday qalb qulfini ochuvchi eng chiroyli kalitdir."
+            </p>
+          </div>
+
+          <button 
+            onclick="fireCardBlossom(event)" 
+            class="w-full py-2.5 px-4 rounded-2xl bg-rose-50 active:bg-rose-100 text-rose-700 text-xs font-semibold border border-rose-200 transition-colors flex items-center justify-center gap-1.5 touch-target"
+          >
+            <span>🌸 Gul iforini his qilish (Blossom)</span>
+          </button>
+        </div>
+
+        <!-- CARD 2: Mo'yqalam va Tuval -->
+        <div class="editorial-card rounded-3xl p-5 sm:p-6 relative overflow-hidden border border-amber-200/80 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-200 to-yellow-100 flex items-center justify-center text-xl shadow-xs">
+                🖌️
+              </span>
+              <div>
+                <h4 class="font-serif font-bold text-lg text-slate-900">Mo'yqalam va Tuval</h4>
+                <p class="text-[11px] text-amber-600 font-medium">Rassomlikka bo'lgan nozik didi</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wider bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">
+              San'at
+            </span>
+          </div>
+
+          <p class="text-xs text-slate-600 leading-relaxed font-light">
+            Ilgari rassomlikka va tasviriy san'atga qiziqqan nozik did sohibasi. Ranglarning uyg'unligi, chiziqlarning mayin harakati va oddiy narsalarda ham san'at ko'ra olish qobiliyati unga xosdir.
+          </p>
+
+          <!-- Interactive Color Swatches -->
+          <div class="p-3 rounded-2xl bg-amber-50/50 border border-amber-100 space-y-2">
+            <div class="flex items-center justify-between text-[11px] text-slate-500">
+              <span>Akvarel ranglar:</span>
+              <span id="palette-label" class="text-amber-700 font-semibold">Oltin shaftoli</span>
+            </div>
+            <div class="flex items-center justify-around gap-1.5 pt-1">
+              <button onclick="pickColor('Atirgul nafasi', '#fda4af')" class="w-8 h-8 rounded-full bg-rose-300 border-2 border-white shadow-xs active:scale-110 transition-transform touch-target flex items-center justify-center" aria-label="Atirgul"></button>
+              <button onclick="pickColor('Oltin shaftoli', '#fcd34d')" class="w-8 h-8 rounded-full bg-amber-300 border-2 border-white shadow-xs active:scale-110 transition-transform touch-target flex items-center justify-center" aria-label="Oltin"></button>
+              <button onclick="pickColor('Lavanda ifori', '#c084fc')" class="w-8 h-8 rounded-full bg-lavender-300 border-2 border-white shadow-xs active:scale-110 transition-transform touch-target flex items-center justify-center" aria-label="Lavanda"></button>
+              <button onclick="pickColor('Yalpiz suvi', '#6ee7b7')" class="w-8 h-8 rounded-full bg-emerald-300 border-2 border-white shadow-xs active:scale-110 transition-transform touch-target flex items-center justify-center" aria-label="Yalpiz"></button>
+              <button onclick="pickColor('Sokin osmon', '#93c5fd')" class="w-8 h-8 rounded-full bg-sky-300 border-2 border-white shadow-xs active:scale-110 transition-transform touch-target flex items-center justify-center" aria-label="Osmon"></button>
+            </div>
+          </div>
+
+          <button 
+            onclick="splashWatercolor(event)" 
+            class="w-full py-2.5 px-4 rounded-2xl bg-amber-50 active:bg-amber-100 text-amber-700 text-xs font-semibold border border-amber-200 transition-colors flex items-center justify-center gap-1.5 touch-target"
+          >
+            <span>🎨 Tuvalga bo'yoq sepish</span>
+          </button>
+        </div>
+
+        <!-- CARD 3: Shukronalik va Maqsadlar -->
+        <div class="editorial-card rounded-3xl p-5 sm:p-6 relative overflow-hidden border border-lavender-200/80 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-11 h-11 rounded-2xl bg-gradient-to-br from-lavender-200 to-purple-100 flex items-center justify-center text-xl shadow-xs">
+                ⭐
+              </span>
+              <div>
+                <h4 class="font-serif font-bold text-lg text-slate-900">Shukronalik & Maqsadlar</h4>
+                <p class="text-[11px] text-purple-600 font-medium">Nolimasdan olg'a intilishi</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold text-purple-600 uppercase tracking-wider bg-lavender-50 px-2 py-0.5 rounded-full border border-purple-100">
+              Sabot
+            </span>
+          </div>
+
+          <p class="text-xs text-slate-600 leading-relaxed font-light">
+            Hech qachon hayotdan nolimaydigan, har qanday holatda shukronalik bilan yashaydigan kuchli va samimiy inson. Shu bilan birga ulkan va ezgu maqsadlarini hech qachon unutmaydi — faqat yuksaklik sari intiladi.
+          </p>
+
+          <div class="p-3 rounded-2xl bg-purple-50/50 border border-purple-100 flex items-center gap-2.5">
+            <span class="text-xl">🧭</span>
+            <p class="font-hand text-base text-purple-700 leading-tight">
+              "Shukrona qalb — buyuk yutuqlarning mustahkam poydevoridir."
+            </p>
+          </div>
+
+          <button 
+            onclick="sparkStarGoals(event)" 
+            class="w-full py-2.5 px-4 rounded-2xl bg-purple-50 active:bg-purple-100 text-purple-700 text-xs font-semibold border border-purple-200 transition-colors flex items-center justify-center gap-1.5 touch-target"
+          >
+            <span>✨ Maqsadlar nuri sochish</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SEKSIYA 3: NOODATIY TAKLIFNOMA (Uchrashuv Tanlovi)
+         ========================================== -->
+    <section id="taklif" class="pt-6">
+      <div class="editorial-card rounded-3xl p-5 sm:p-7 border border-rose-200/90 shadow-xl space-y-6 relative overflow-hidden">
+        
+        <!-- Background Ambient Glow -->
+        <div class="absolute -top-10 -right-10 w-36 h-36 bg-amber-200/40 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-10 -left-10 w-36 h-36 bg-rose-200/40 rounded-full blur-2xl pointer-events-none"></div>
+
+        <!-- Header -->
+        <div class="text-center space-y-1.5 relative z-10">
+          <span class="inline-flex items-center gap-1 text-[10px] font-bold tracking-widest text-rose-600 uppercase bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">
+            💌 Maxsus Taklif
+          </span>
+          <h3 class="text-2xl sm:text-3xl font-serif font-bold text-slate-900 leading-snug">
+            Birgalikda vaqt o'tkazish uchun kichik taklif...
+          </h3>
+          <p class="text-xs text-slate-500 max-w-sm mx-auto font-light">
+            Gulzoda, quyidagi variantlardan qaysi biri qalbingizga ko'proq yoqadi?
+          </p>
+        </div>
+
+        <!-- 3 Interactive Touch-Friendly Choice Cards -->
+        <div class="space-y-2.5 relative z-10">
+          
+          <!-- Variant 1: Kinoteatr -->
+          <div 
+            id="choice-cinema" 
+            onclick="selectChoice('cinema', '🎬 Kinoteatr / Maroqli film kechasi')" 
+            class="choice-card cursor-pointer p-3.5 sm:p-4 rounded-2xl border-2 border-rose-100 bg-white/80 active:border-rose-400 transition-all flex items-center justify-between gap-3 touch-target"
+          >
+            <div class="flex items-center gap-3">
+              <span class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl flex-shrink-0">
+                🎬
+              </span>
+              <div>
+                <h5 class="font-serif font-bold text-xs sm:text-sm text-slate-800">Kinoteatr / Maroqli Film Kechasi</h5>
+                <p class="text-[11px] text-slate-500">Eng yaxshi film va yoqimli shinam muhit</p>
+              </div>
+            </div>
+            <div class="choice-indicator w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center flex-shrink-0"></div>
+          </div>
+
+          <!-- Variant 2: Piknik (Tavsiya) -->
+          <div 
+            id="choice-picnic" 
+            onclick="selectChoice('picnic', '🧺 Tinch va toza havoda piknik (gullar va tabiat bag\'rida)')" 
+            class="choice-card active cursor-pointer p-3.5 sm:p-4 rounded-2xl border-2 border-rose-400 bg-rose-50/70 transition-all flex items-center justify-between gap-3 relative touch-target"
+          >
+            <span class="absolute -top-2 right-4 text-[9px] font-bold bg-rose-500 text-white px-2 py-0.5 rounded-full shadow-xs">Tavsiya 🌸</span>
+            <div class="flex items-center gap-3">
+              <span class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl flex-shrink-0">
+                🧺
+              </span>
+              <div>
+                <h5 class="font-serif font-bold text-xs sm:text-sm text-slate-800">Tabiatda Piknik</h5>
+                <p class="text-[11px] text-slate-500">Toza havo, gullar ifori va mazali choy</p>
+              </div>
+            </div>
+            <div class="choice-indicator w-5 h-5 rounded-full border-2 border-rose-500 bg-rose-500 text-white text-[10px] flex items-center justify-center flex-shrink-0 font-bold">✓</div>
+          </div>
+
+          <!-- Variant 3: Sayohat -->
+          <div 
+            id="choice-travel" 
+            onclick="selectChoice('travel', '✈️ Kichik va unutilmas sayohat')" 
+            class="choice-card cursor-pointer p-3.5 sm:p-4 rounded-2xl border-2 border-rose-100 bg-white/80 active:border-rose-400 transition-all flex items-center justify-between gap-3 touch-target"
+          >
+            <div class="flex items-center gap-3">
+              <span class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl flex-shrink-0">
+                ✈️
+              </span>
+              <div>
+                <h5 class="font-serif font-bold text-xs sm:text-sm text-slate-800">Kichik va Unutilmas Sayohat</h5>
+                <p class="text-[11px] text-slate-500">Yangi manzaralar va chiroyli lahzalar</p>
+              </div>
+            </div>
+            <div class="choice-indicator w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center flex-shrink-0"></div>
+          </div>
+
+        </div>
+
+        <!-- Touch-Friendly DateTime Picker -->
+        <div class="bg-white/90 p-3.5 rounded-2xl border border-rose-200/80 space-y-1.5 relative z-10">
+          <label for="meeting-time" class="block text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+            <span class="text-rose-500">📅</span>
+            <span>Uchrashuv kuni va vaqti:</span>
+          </label>
+          <input 
+            type="datetime-local" 
+            id="meeting-time" 
+            class="w-full px-3 py-2.5 rounded-xl border border-rose-200 bg-rose-50/40 text-xs sm:text-sm text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-rose-400 touch-target"
+          />
+        </div>
+
+        <!-- Buttons Arena: Ha va Qochadigan "Yo'q" tugmasi -->
+        <div id="decision-playground" class="relative w-full min-h-[100px] flex items-center justify-center gap-4 pt-2">
+          
+          <!-- YES BUTTON -->
+          <button 
+            id="yes-button" 
+            onclick="handleYesDecision(event)" 
+            class="px-7 py-3.5 rounded-full bg-gradient-to-r from-rose-500 via-pink-600 to-amber-500 text-white font-serif font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-rose-500/25 active:scale-95 transition-all flex items-center gap-1.5 touch-target z-10"
+          >
+            <span>Ha, albatta! 🌸</span>
+          </button>
+
+          <!-- EVASIVE "YO'Q" BUTTON: Runs away dynamically on touchstart / pointerdown / hover / click -->
+          <button 
+            id="evasive-no-btn" 
+            ontouchstart="runAwayEvasiveButton(event)"
+            onpointerdown="runAwayEvasiveButton(event)"
+            onmouseover="runAwayEvasiveButton(event)"
+            onclick="runAwayEvasiveButton(event)" 
+            class="px-5 py-3 rounded-full bg-slate-100 text-slate-500 text-xs font-semibold shadow-xs border border-slate-200 transition-all duration-200 select-none cursor-not-allowed touch-target"
+            style="position: relative;"
+          >
+            <span id="evasive-btn-text">Yo'q...</span>
+          </button>
+
+        </div>
+
+        <!-- Success Feedback Banner -->
+        <div id="proposal-feedback" class="hidden p-4 rounded-2xl bg-gradient-to-r from-rose-100 via-pink-50 to-amber-100 border border-rose-300 text-center animate-pulse-soft">
+          <p class="font-serif font-bold text-rose-800 text-sm sm:text-base" id="feedback-text">
+            Ajoyib tanlov! Sizning javobingiz qabul qilindi 💖
+          </p>
+          <p class="text-xs text-slate-600 mt-1">
+            Quyidagi Telegram chat orqali ham xabar yuborishingiz mumkin!
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SEKSIYA 4: LIVE TELEGRAM CHAT UI (Mobile Touch-Friendly)
+         ========================================== -->
+    <section id="chat" class="pt-4">
+      <div class="editorial-card rounded-3xl border border-rose-200/90 shadow-xl overflow-hidden flex flex-col h-[520px]">
+        
+        <!-- Telegram Mobile Header -->
+        <div class="px-4 py-3 bg-white/95 border-b border-rose-100 flex items-center justify-between flex-shrink-0">
+          
+          <div class="flex items-center gap-2.5">
+            <div class="relative">
+              <img 
+                src="photo.PNG" 
+                alt="Gulzoda" 
+                onerror="if (this.src.indexOf('photo.jpg') === -1) { this.src='photo.jpg'; }"
+                class="w-9 h-9 rounded-full object-cover border border-amber-200 shadow-2xs"
+              />
+              <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"></span>
+            </div>
+            <div>
+              <div class="flex items-center gap-1">
+                <h4 class="font-bold text-xs sm:text-sm text-slate-900">Gulzoda</h4>
+                <span class="text-blue-500 text-xs">✓</span>
+              </div>
+              <p class="text-[10px] text-emerald-600 font-medium">onlayn • doim qalbda ✨</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-1 text-slate-400">
+            <button onclick="clearChatHistory()" title="Chat tarixini tozalash" class="p-2 rounded-full hover:bg-rose-50 hover:text-rose-600 transition-colors text-xs flex items-center gap-1 touch-target">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Scrollable Messages Container -->
+        <div id="chat-messages-container" class="flex-1 p-4 overflow-y-auto space-y-3 bg-gradient-to-b from-rose-50/20 via-white/60 to-amber-50/20">
+          
+          <!-- Date Separator -->
+          <div class="text-center">
+            <span class="text-[10px] font-medium text-slate-400 bg-white/90 px-2.5 py-0.5 rounded-full border border-slate-100 shadow-2xs">
+              Bugun
+            </span>
+          </div>
+
+          <!-- Default Incoming Welcome Message from Gulzoda -->
+          <div class="flex items-end gap-2 max-w-[85%]">
+            <img 
+              src="photo.PNG" 
+              alt="Gulzoda" 
+              onerror="if (this.src.indexOf('photo.jpg') === -1) { this.src='photo.jpg'; }"
+              class="w-6 h-6 rounded-full object-cover border border-amber-200 mb-0.5 flex-shrink-0"
+            />
+            <div class="tg-bubble-in p-3 text-slate-700 text-xs leading-relaxed shadow-xs">
+              <p class="font-semibold text-rose-600 mb-0.5 text-[10px]">Gulzoda</p>
+              <p>
+                Assalomu alaykum! Xush kelibsiz 🌸 Bu yerga yozgan har bir samimiy xabaringiz to'g'ridan-to'g'ri Telegramimga yetib boradi. Fikrlaringiz yoki o'zgacha taklifingizni qoldirishingiz mumkin 😊✨
+              </p>
+              <span class="block text-[9px] text-slate-400 text-right mt-1">12:00</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Chat Messages will appear here -->
+          <div id="dynamic-chat-messages" class="space-y-3"></div>
+        </div>
+
+        <!-- Chat Input Bar -->
+        <div class="p-2.5 bg-white border-t border-rose-100 flex items-center gap-2">
+          
+          <!-- Quick emoji buttons -->
+          <button onclick="insertEmoji('🌸')" class="p-1.5 rounded-full hover:bg-rose-50 text-base touch-target flex items-center justify-center" aria-label="Gul emoji">
+            🌸
+          </button>
+          <button onclick="insertEmoji('✨')" class="p-1.5 rounded-full hover:bg-rose-50 text-base touch-target flex items-center justify-center" aria-label="Yulduz emoji">
+            ✨
+          </button>
+
+          <!-- Input field -->
+          <input 
+            type="text" 
+            id="chat-input" 
+            placeholder="Xabar yozing... (Enter bosing)" 
+            onkeydown="if(event.key === 'Enter') handleSendMessage()"
+            class="flex-1 px-3.5 py-2.5 rounded-full border border-rose-200 bg-rose-50/40 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:bg-white touch-target"
+          />
+
+          <!-- Send button -->
+          <button 
+            id="send-msg-btn"
+            onclick="handleSendMessage()" 
+            class="px-4 py-2.5 rounded-full bg-gradient-to-r from-rose-500 to-amber-500 text-white text-xs font-semibold shadow-xs active:scale-95 transition-all flex items-center gap-1 touch-target flex-shrink-0"
+          >
+            <span>Yuborish</span>
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="text-center py-6 text-slate-400 text-xs space-y-1">
+      <p class="font-serif italic text-slate-600">"Nafosat va samimiyat — qalbning eng go'zal ziynatidir."</p>
+      <p class="text-[11px]">Gulzoda uchun mehr va hurmat bilan tayyorlandi 🌸</p>
+    </footer>
+
+  </main>
+
+  <!-- ==========================================
+       MODAL: TELEGRAM BOT CONFIGURATION
+       ========================================== -->
+  <div id="tg-config-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="editorial-card rounded-3xl max-w-sm w-full p-5 sm:p-6 border border-rose-200 shadow-2xl bg-white space-y-4">
+      
+      <div class="flex items-center justify-between pb-2 border-b border-rose-100">
+        <h3 class="font-serif font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+          <span>⚙️</span>
+          <span>Telegram Bot Sozlamalari</span>
+        </h3>
+        <button onclick="toggleConfigModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold p-1 touch-target">✕</button>
+      </div>
+
+      <p class="text-[11px] text-slate-600 leading-relaxed">
+        Xabarlarni real Telegram hisobingizga qabul qilish uchun @BotFather orqali olingan Bot Tokeni va Chat ID raqamingizni kiriting:
+      </p>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-1">Telegram Bot Token:</label>
+          <input 
+            type="text" 
+            id="cfg-bot-token" 
+            placeholder="masalan: 123456789:ABCdefGhIJKlm..." 
+            class="w-full px-3 py-2 text-xs rounded-xl border border-rose-200 bg-rose-50/30 focus:outline-none focus:ring-2 focus:ring-rose-400 font-mono touch-target"
+          />
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-1">Chat ID (Sizniki yoki Gulzodaniki):</label>
+          <input 
+            type="text" 
+            id="cfg-chat-id" 
+            placeholder="masalan: 987654321" 
+            class="w-full px-3 py-2 text-xs rounded-xl border border-rose-200 bg-rose-50/30 focus:outline-none focus:ring-2 focus:ring-rose-400 font-mono touch-target"
+          />
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="toggleConfigModal()" class="px-4 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-100 rounded-xl touch-target">
+          Yopish
+        </button>
+        <button onclick="saveTelegramConfig()" class="px-4 py-2 text-xs font-semibold bg-rose-500 hover:bg-rose-600 text-white rounded-xl shadow-xs touch-target">
+          Saqlash
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==========================================
+       JAVASCRIPT LOGIC
+       ========================================== -->
+  <script>
+    // ==========================================
+    // 1. TELEGRAM BOT CREDENTIALS
+    // ==========================================
+    let TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN';
+    let CHAT_ID = 'YOUR_CHAT_ID';
+
+    if (localStorage.getItem('TG_BOT_TOKEN')) {
+      TELEGRAM_BOT_TOKEN = localStorage.getItem('TG_BOT_TOKEN');
+    }
+    if (localStorage.getItem('TG_CHAT_ID')) {
+      CHAT_ID = localStorage.getItem('TG_CHAT_ID');
+    }
+
+    function toggleConfigModal() {
+      const modal = document.getElementById('tg-config-modal');
+      const isHidden = modal.classList.contains('hidden');
+      if (isHidden) {
+        document.getElementById('cfg-bot-token').value = TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN' ? '' : TELEGRAM_BOT_TOKEN;
+        document.getElementById('cfg-chat-id').value = CHAT_ID === 'YOUR_CHAT_ID' ? '' : CHAT_ID;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    function saveTelegramConfig() {
+      const token = document.getElementById('cfg-bot-token').value.trim();
+      const chat = document.getElementById('cfg-chat-id').value.trim();
+      if (token) {
+        TELEGRAM_BOT_TOKEN = token;
+        localStorage.setItem('TG_BOT_TOKEN', token);
+      }
+      if (chat) {
+        CHAT_ID = chat;
+        localStorage.setItem('TG_CHAT_ID', chat);
+      }
+      toggleConfigModal();
+      alert("Telegram sozlamalari muvaffaqiyatli saqlandi! ✨");
+    }
+
+    // ==========================================
+    // 2. VERTICAL SCROLL PROGRESS INDICATOR
+    // ==========================================
+    const progressBar = document.getElementById('scroll-progress-bar');
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progressPercent = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      if (progressBar) {
+        progressBar.style.width = progressPercent + '%';
+      }
+    }, { passive: true });
+
+    // ==========================================
+    // 3. BACKGROUND FLOATING PETALS (Canvas)
+    // ==========================================
+    const canvas = document.getElementById('petals-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const petalCount = 20; // optimal for mobile performance
+    const petals = [];
+    const petalColors = [
+      'rgba(251, 113, 133, 0.45)', // rose
+      'rgba(244, 63, 94, 0.35)',
+      'rgba(253, 164, 175, 0.5)',
+      'rgba(245, 158, 11, 0.3)',   // gold
+      'rgba(216, 180, 254, 0.4)'   // lavender
+    ];
+
+    for (let i = 0; i < petalCount; i++) {
+      petals.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        size: 7 + Math.random() * 10,
+        speedX: -0.8 + Math.random() * 1.6,
+        speedY: 0.5 + Math.random() * 1.2,
+        rotation: Math.random() * 360,
+        rotationSpeed: -1 + Math.random() * 2,
+        color: petalColors[Math.floor(Math.random() * petalColors.length)]
+      });
+    }
+
+    function drawPetal(p) {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.bezierCurveTo(-p.size / 2, -p.size, -p.size, p.size / 3, 0, p.size);
+      ctx.bezierCurveTo(p.size, p.size / 3, p.size / 2, -p.size, 0, 0);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function animatePetals() {
+      ctx.clearRect(0, 0, width, height);
+      petals.forEach(p => {
+        p.y += p.speedY;
+        p.x += Math.sin(p.y * 0.015) * 0.7 + p.speedX * 0.2;
+        p.rotation += p.rotationSpeed;
+
+        if (p.y > height + 20) {
+          p.y = -20;
+          p.x = Math.random() * width;
+        }
+        if (p.x > width + 20) p.x = -20;
+        if (p.x < -20) p.x = width + 20;
+
+        drawPetal(p);
+      });
+      requestAnimationFrame(animatePetals);
+    }
+    animatePetals();
+
+    // ==========================================
+    // 4. MICRO-INTERACTIONS & CONFETTI
+    // ==========================================
+    function burstPetalsAtAvatar(e) {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 35,
+          spread: 60,
+          origin: { y: 0.35, x: 0.5 },
+          colors: ['#fda4af', '#f43f5e', '#fcd34d', '#e9d5ff']
+        });
+      }
+    }
+
+    function fireCardBlossom(e) {
+      if (typeof confetti === 'function') {
+        const rect = e.target.getBoundingClientRect();
+        const x = (rect.left + rect.width / 2) / window.innerWidth;
+        const y = (rect.top + rect.height / 2) / window.innerHeight;
+        confetti({
+          particleCount: 40,
+          spread: 65,
+          origin: { x, y },
+          colors: ['#f43f5e', '#fda4af', '#fff1f2', '#fbbf24']
+        });
+      }
+    }
+
+    function pickColor(name, colorCode) {
+      const lbl = document.getElementById('palette-label');
+      if (lbl) {
+        lbl.innerText = name;
+        lbl.style.color = colorCode;
+      }
+    }
+
+    function splashWatercolor(e) {
+      if (typeof confetti === 'function') {
+        const rect = e.target.getBoundingClientRect();
+        confetti({
+          particleCount: 35,
+          angle: 90,
+          spread: 75,
+          origin: { 
+            x: (rect.left + rect.width / 2) / window.innerWidth, 
+            y: (rect.top + rect.height / 2) / window.innerHeight 
+          },
+          colors: ['#fcd34d', '#f43f5e', '#a855f7', '#38bdf8', '#34d399']
+        });
+      }
+    }
+
+    function sparkStarGoals(e) {
+      if (typeof confetti === 'function') {
+        const rect = e.target.getBoundingClientRect();
+        confetti({
+          particleCount: 40,
+          spread: 80,
+          origin: { 
+            x: (rect.left + rect.width / 2) / window.innerWidth, 
+            y: (rect.top + rect.height / 2) / window.innerHeight 
+          },
+          colors: ['#fbbf24', '#f59e0b', '#d97706', '#c084fc']
+        });
+      }
+    }
+
+    // ==========================================
+    // 5. UCHRASHUV TANLOVI & EVASIVE BUTTON FOR TOUCH/MOBILE
+    // ==========================================
+    let selectedChoiceText = '🧺 Tinch va toza havoda piknik (gullar va tabiat bag\'rida)';
+
+    // Datetime picker default
+    const dtPicker = document.getElementById('meeting-time');
+    const now = new Date();
+    now.setHours(18, 0, 0, 0);
+    // Formatting local time string for input: YYYY-MM-DDTHH:mm
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    if (dtPicker) {
+      dtPicker.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+      dtPicker.min = `${year}-${month}-${day}T09:00`;
+    }
+
+    function selectChoice(type, text) {
+      selectedChoiceText = text;
+      const cards = ['cinema', 'picnic', 'travel'];
+      cards.forEach(c => {
+        const el = document.getElementById(`choice-${c}`);
+        const indicator = el ? el.querySelector('.choice-indicator') : null;
+        if (c === type) {
+          el.classList.add('border-rose-400', 'bg-rose-50/70');
+          el.classList.remove('border-rose-100', 'bg-white/80');
+          if (indicator) {
+            indicator.className = 'choice-indicator w-5 h-5 rounded-full border-2 border-rose-500 bg-rose-500 text-white text-[10px] flex items-center justify-center flex-shrink-0 font-bold';
+            indicator.innerText = '✓';
+          }
+        } else {
+          el.classList.remove('border-rose-400', 'bg-rose-50/70');
+          el.classList.add('border-rose-100', 'bg-white/80');
+          if (indicator) {
+            indicator.className = 'choice-indicator w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center flex-shrink-0';
+            indicator.innerText = '';
+          }
+        }
+      });
+    }
+
+    // Dynamic Evasive Button for touchstart, pointerdown, hover & click
+    const evasiveTexts = [
+      "Yo'q...",
+      "Urinmang! 😜",
+      "Ilojisi yo'q 🌸",
+      "Faqat 'Ha' mumkin ✨",
+      "Qo'l tegmas 🙈",
+      "Gulzoda, rozi bo'ling 😊"
+    ];
+    let evasiveAttemptCount = 0;
+
+    function runAwayEvasiveButton(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      const btn = document.getElementById('evasive-no-btn');
+      const playground = document.getElementById('decision-playground');
+      if (!btn || !playground) return;
+
+      evasiveAttemptCount++;
+      const textSpan = document.getElementById('evasive-btn-text');
+      if (textSpan) {
+        textSpan.innerText = evasiveTexts[evasiveAttemptCount % evasiveTexts.length];
+      }
+
+      // Calculate safe random coordinates within playground or screen margins
+      const playRect = playground.getBoundingClientRect();
+      const btnRect = btn.getBoundingClientRect();
+
+      // Mobile bounds: +/- 110px horizontal, +/- 40px vertical
+      const maxDeltaX = Math.min(window.innerWidth / 2 - 60, 120);
+      const maxDeltaY = 45;
+
+      const randomX = (Math.random() - 0.5) * 2 * maxDeltaX;
+      const randomY = (Math.random() - 0.5) * 2 * maxDeltaY;
+
+      btn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+
+      // Quick tiny vibration on supported mobile devices
+      if (navigator.vibrate) {
+        navigator.vibrate(40);
+      }
+    }
+
+    function handleYesDecision(e) {
+      const timeVal = dtPicker ? dtPicker.value : '';
+      const formattedTime = timeVal ? new Date(timeVal).toLocaleString('uz-UZ') : "Kelishilgan vaqtda";
+
+      // Big Celebratory Confetti Burst
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 100,
+          spread: 90,
+          origin: { y: 0.6, x: 0.5 },
+          colors: ['#f43f5e', '#fda4af', '#fbbf24', '#c084fc', '#fff']
+        });
+        setTimeout(() => {
+          confetti({
+            particleCount: 60,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0.1, y: 0.7 }
+          });
+          confetti({
+            particleCount: 60,
+            angle: 120,
+            spread: 55,
+            origin: { x: 0.9, y: 0.7 }
+          });
+        }, 250);
+      }
+
+      // Save to localStorage
+      localStorage.setItem('gulzoda_choice', selectedChoiceText);
+      localStorage.setItem('gulzoda_time', timeVal);
+
+      // Display feedback message
+      const fb = document.getElementById('proposal-feedback');
+      const fbText = document.getElementById('feedback-text');
+      if (fb && fbText) {
+        fbText.innerHTML = `💖 <b>Tanlovingiz:</b> ${selectedChoiceText}<br/><span class="text-xs text-rose-700">📅 <b>Vaqt:</b> ${formattedTime}</span>`;
+        fb.classList.remove('hidden');
+      }
+
+      // Also auto-prepare or notify via chat
+      appendOutgoingMessage(`Taklif qabul qilindi! Tanlov: ${selectedChoiceText} (${formattedTime})`);
+      sendTelegramMessage(`🌸 Gulzoda taklifni qabul qildi!\nTanlov: ${selectedChoiceText}\nVaqt: ${formattedTime}`);
+    }
+
+    // ==========================================
+    // 6. TELEGRAM LIVE CHAT LOGIC
+    // ==========================================
+    const dynamicMessagesContainer = document.getElementById('dynamic-chat-messages');
+    const chatContainer = document.getElementById('chat-messages-container');
+    const chatInput = document.getElementById('chat-input');
+
+    // Load messages from localStorage on startup
+    function loadSavedChatMessages() {
+      const saved = localStorage.getItem('gulzoda_chat_history');
+      if (saved) {
+        try {
+          const list = JSON.parse(saved);
+          list.forEach(item => {
+            renderMessageBubble(item.text, item.time, item.sender);
+          });
+          scrollChatToBottom();
+        } catch (err) {
+          console.error("Chat parse error", err);
+        }
+      }
+    }
+
+    function scrollChatToBottom() {
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    }
+
+    function insertEmoji(char) {
+      if (chatInput) {
+        chatInput.value += char;
+        chatInput.focus();
+      }
+    }
+
+    function renderMessageBubble(text, timeStr, sender = 'user') {
+      const bubble = document.createElement('div');
+      bubble.className = 'flex items-end justify-end gap-1.5 max-w-[88%] ml-auto';
+      bubble.innerHTML = `
+        <div class="tg-bubble-out p-3 text-slate-800 text-xs leading-relaxed shadow-xs">
+          <p>${escapeHtml(text)}</p>
+          <div class="flex items-center justify-end gap-1 text-[9px] text-amber-800/70 mt-1">
+            <span>${timeStr}</span>
+            <span>✓✓</span>
+          </div>
+        </div>
+      `;
+      dynamicMessagesContainer.appendChild(bubble);
+    }
+
+    function appendOutgoingMessage(text) {
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      
+      renderMessageBubble(text, timeStr, 'user');
+      scrollChatToBottom();
+
+      // Save to localStorage
+      let history = [];
+      const saved = localStorage.getItem('gulzoda_chat_history');
+      if (saved) {
+        try { history = JSON.parse(saved); } catch(e) {}
+      }
+      history.push({ text, time: timeStr, sender: 'user' });
+      localStorage.setItem('gulzoda_chat_history', JSON.stringify(history));
+    }
+
+    function clearChatHistory() {
+      if (confirm("Haqiqatan ham chat tarixini tozalashni xohlaysizmi?")) {
+        localStorage.removeItem('gulzoda_chat_history');
+        if (dynamicMessagesContainer) {
+          dynamicMessagesContainer.innerHTML = '';
+        }
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // Telegram Bot API orqali yuborish
+    async function sendTelegramMessage(text) {
+      if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN' || !CHAT_ID || CHAT_ID === 'YOUR_CHAT_ID') {
+        console.warn("Telegram Bot token yoki Chat ID sozlanmagan. Sozlamalar modalida kiritishingiz mumkin.");
+        return false;
+      }
+
+      try {
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: text
+          })
+        });
+        const data = await res.json();
+        return data.ok;
+      } catch (e) {
+        console.error("Telegram API xatosi:", e);
+        return false;
+      }
+    }
+
+    async function handleSendMessage() {
+      const val = chatInput ? chatInput.value.trim() : '';
+      if (!val) return;
+
+      appendOutgoingMessage(val);
+      chatInput.value = '';
+
+      // Telegram API ga jo'natish
+      const success = await sendTelegramMessage(`💌 Gulzoda saytidan yangi xabar:\n\n"${val}"`);
+
+      // Agar bot sozlanmagan bo'lsa, foydalanuvchiga yordam beruvchi kichik qisqa javob chiqarish
+      if (!success && (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN')) {
+        setTimeout(() => {
+          const now = new Date();
+          const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+          const botBubble = document.createElement('div');
+          botBubble.className = 'flex items-end gap-2 max-w-[85%]';
+          botBubble.innerHTML = `
+            <img src="photo.PNG" alt="Gulzoda" onerror="if (this.src.indexOf('photo.jpg') === -1) { this.src='photo.jpg'; }" class="w-6 h-6 rounded-full object-cover border border-amber-200 mb-0.5 flex-shrink-0" />
+            <div class="tg-bubble-in p-3 text-slate-700 text-xs leading-relaxed shadow-xs">
+              <p class="font-semibold text-rose-600 mb-0.5 text-[10px]">Tizim eslatmasi</p>
+              <p>Xabaringiz ekranda saqlandi! Uni haqiqiy Telegramga yetib borishi uchun yuqoridagi sozlamalar (⚙️) belgisini bosib, Telegram Bot Token va Chat ID kiriting ✨</p>
+              <span class="block text-[9px] text-slate-400 text-right mt-1">${timeStr}</span>
+            </div>
+          `;
+          dynamicMessagesContainer.appendChild(botBubble);
+          scrollChatToBottom();
+        }, 600);
+      }
+    }
+
+    // Run on startup
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSavedChatMessages();
+    });
+  </script>
+</body>
+</html>
